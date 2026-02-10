@@ -66,6 +66,7 @@ app.get('/health', (req, res) => {
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🎨 Pet Portrait Backend running on port ${PORT}`);
+  console.log(`✅ Email service: ${process.env.EMAIL_USER ? 'ACTIVE' : 'INACTIVE'}`);
 });
 
 export { upload };
