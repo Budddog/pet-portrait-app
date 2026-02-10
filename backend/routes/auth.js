@@ -9,11 +9,11 @@ const router = express.Router();
 const users = new Map();
 const emailTokens = new Map();
 
-// Email configuration
+// Email configuration (Gmail SMTP)
 const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: process.env.EMAIL_PORT,
-  secure: false,
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASSWORD
@@ -36,7 +36,8 @@ router.post('/login', async (req, res) => {
     emailTokens.set(token, { email, expiresAt });
 
     // Send email
-    const loginLink = `${process.env.FRONTEND_URL}/verify?token=${token}`;
+    const baseUrl = process.env.FRONTEND_URL || 'https://skillful-prosperity-production.up.railway.app';
+    const loginLink = `${baseUrl}/verify?token=${token}`;
     
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
