@@ -29,6 +29,12 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'Valid email required' });
     }
 
+    // Check env vars
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
+      console.error('Missing EMAIL_USER or EMAIL_PASSWORD');
+      return res.status(500).json({ error: 'Email service not configured' });
+    }
+
     // Generate token
     const token = crypto.randomBytes(32).toString('hex');
     const expiresAt = Date.now() + 15 * 60 * 1000; // 15 minutes
@@ -55,8 +61,8 @@ router.post('/login', async (req, res) => {
 
     res.json({ message: 'Login link sent to email', email });
   } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ error: 'Failed to send login email' });
+    console.error('Login error:', error.message);
+    res.status(500).json({ error: 'Failed to send login email: ' + error.message });
   }
 });
 
