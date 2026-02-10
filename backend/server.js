@@ -47,6 +47,17 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
+// Debug endpoint - check if env vars are loaded
+app.get('/api/debug/env', (req, res) => {
+  res.json({
+    EMAIL_USER: process.env.EMAIL_USER ? '✅ SET' : '❌ MISSING',
+    EMAIL_PASSWORD: process.env.EMAIL_PASSWORD ? '✅ SET' : '❌ MISSING',
+    JWT_SECRET: process.env.JWT_SECRET ? '✅ SET' : '❌ MISSING',
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY ? '✅ SET' : '❌ MISSING',
+    NODE_ENV: process.env.NODE_ENV
+  });
+});
+
 // Health check (before static serving in production)
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
