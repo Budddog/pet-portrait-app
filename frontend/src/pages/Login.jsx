@@ -26,9 +26,9 @@ export default function Login({ onSuccess }) {
 
   return (
     <div className="content auth-form">
-      <h2>Welcome to Pet Portrait</h2>
-      <p style={{ textAlign: 'center', color: '#666', marginBottom: '20px' }}>
-        Generate stunning Renaissance-style portraits of your beloved pets
+      <h2>🎨 PET PORTRAIT APP - VERSION 2.0 DEPLOYED ✅</h2>
+      <p style={{ textAlign: 'center', color: '#d946ef', marginBottom: '20px', fontSize: '1.2em', fontWeight: 'bold' }}>
+        🚀 NEW VERSION IS LIVE! 🚀
       </p>
 
       {message && <div className="success">{message}</div>}
