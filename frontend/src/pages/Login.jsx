@@ -14,11 +14,16 @@ export default function Login({ onSuccess }) {
     setLoading(true);
 
     try {
-      await authAPI.login(email);
-      setMessage('✅ Check your email for the login link!');
+      const response = await authAPI.login(email);
+      if (response.token) {
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('email', email);
+        setMessage('✅ Login successful!');
+        if (onSuccess) onSuccess();
+      }
       setEmail('');
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to send login email');
+      setError(err.response?.data?.error || 'Login failed');
     } finally {
       setLoading(false);
     }
@@ -26,9 +31,9 @@ export default function Login({ onSuccess }) {
 
   return (
     <div className="content auth-form">
-      <h2>🎨 PET PORTRAIT APP - VERSION 2.0 DEPLOYED ✅</h2>
-      <p style={{ textAlign: 'center', color: '#d946ef', marginBottom: '20px', fontSize: '1.2em', fontWeight: 'bold' }}>
-        🚀 NEW VERSION IS LIVE! 🚀
+      <h2>🎨 Pet Portrait</h2>
+      <p style={{ textAlign: 'center', color: '#666', marginBottom: '20px' }}>
+        Generate stunning Renaissance-style portraits of your beloved pets
       </p>
 
       {message && <div className="success">{message}</div>}
@@ -48,12 +53,12 @@ export default function Login({ onSuccess }) {
           />
         </div>
         <button type="submit" disabled={loading}>
-          {loading ? 'Sending...' : 'Send Login Link'}
+          {loading ? 'Logging in...' : 'Login'}
         </button>
       </form>
 
       <p style={{ textAlign: 'center', marginTop: '20px', fontSize: '0.9em', color: '#666' }}>
-        We'll send you a secure login link. No password needed!
+        Enter any email to access your pet portraits
       </p>
     </div>
   );

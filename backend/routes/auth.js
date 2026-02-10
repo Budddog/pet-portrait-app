@@ -20,7 +20,7 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// Send magic link login
+// Simple username/password login (test user)
 router.post('/login', async (req, res) => {
   try {
     const { email } = req.body;
@@ -29,40 +29,21 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'Valid email required' });
     }
 
-    // Check env vars
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
-      console.error('Missing EMAIL_USER or EMAIL_PASSWORD');
-      return res.status(500).json({ error: 'Email service not configured' });
-    }
+    // For testing: any email works, generates JWT directly
+    const token = jwt.sign(
+      { email, userId: email.split('@')[0] },
+      process.env.JWT_SECRET || 'test-secret-key',
+      { expiresIn: '30d' }
+    );
 
-    // Generate token
-    const token = crypto.randomBytes(32).toString('hex');
-    const expiresAt = Date.now() + 15 * 60 * 1000; // 15 minutes
-    
-    emailTokens.set(token, { email, expiresAt });
-
-    // Send email
-    const baseUrl = process.env.FRONTEND_URL || 'https://skillful-prosperity-production.up.railway.app';
-    const loginLink = `${baseUrl}/verify?token=${token}`;
-    
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: '🎨 Your Pet Portrait Login Link',
-      html: `
-        <h2>Your Login Link</h2>
-        <p>Click the link below to access your pet portrait app:</p>
-        <a href="${loginLink}" style="padding: 10px 20px; background: #8b5cf6; color: white; text-decoration: none; border-radius: 5px;">
-          Login to Pet Portrait
-        </a>
-        <p>This link expires in 15 minutes.</p>
-      `
+    res.json({ 
+      message: 'Login successful',
+      token,
+      email 
     });
-
-    res.json({ message: 'Login link sent to email', email });
   } catch (error) {
     console.error('Login error:', error.message);
-    res.status(500).json({ error: 'Failed to send login email: ' + error.message });
+    res.status(500).json({ error: 'Login failed' });
   }
 });
 
